@@ -26,7 +26,7 @@ password=$db_password;
 EOM
 
 sed -i 's/address = .*/address = '"${FOSSOLOGY_SCHEDULER_HOST:-localhost}"'/' \
-    /usr/local/etc/fossology/fossology.conf
+    /usr/share/etc/fossology/fossology.conf
 
 # Startup DB if needed or wait for external DB
 if [[ $db_host == 'localhost' ]]; then
@@ -48,24 +48,19 @@ else
   done
 fi
 
-# Setup environment
-if [[ $# -eq 0 || ($# -eq 1 && "$1" == "scheduler") ]]; then
-  /usr/local/lib/fossology/fo-postinstall --common --database --licenseref
-fi
-
 # Start Fossology
 echo
 echo 'Fossology initialisation complete; Starting up...'
 echo
 if [[ $# -eq 0 ]]; then
   /etc/init.d/cron start
-  /usr/local/share/fossology/scheduler/agent/fo_scheduler \
+  /usr/share/fossology/scheduler/agent/fo_scheduler \
     --log /dev/stdout \
     --verbose=3 \
     --reset &
   /usr/sbin/apache2ctl -D FOREGROUND
 elif [[ $# -eq 1 && "$1" == "scheduler" ]]; then
-  exec /usr/local/share/fossology/scheduler/agent/fo_scheduler \
+  exec /usr/share/fossology/scheduler/agent/fo_scheduler \
     --log /dev/stdout \
     --verbose=3 \
     --reset
