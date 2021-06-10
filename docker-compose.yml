@@ -14,12 +14,12 @@ services:
   scheduler:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.scheduler
       args:
       - http_proxy
       - https_proxy
       - no_proxy
-    image: fossology
+    image: fossology:scheduler
     restart: unless-stopped
     environment:
       - FOSSOLOGY_DB_HOST=db
@@ -39,12 +39,12 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.web
       args:
       - http_proxy
       - https_proxy
       - no_proxy
-    image: fossology
+    image: fossology:web
     restart: unless-stopped
     environment:
       - FOSSOLOGY_DB_HOST=db
@@ -64,7 +64,27 @@ services:
       test: ["CMD-SHELL", "curl -sSf localhost/repo/api/v1/version || exit 1"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 5  
+  nomos:
+    build:
+      context: .
+      dockerfile: Dockerfile.nomos
+      args:
+      - http_proxy
+      - https_proxy
+      - no_proxy
+    image: fossology:nomos
+    restart: unless-stopped
+    environment:
+      - FOSSOLOGY_DB_HOST=db
+      - FOSSOLOGY_DB_NAME=fossology
+      - FOSSOLOGY_DB_USER=fossy
+      - FOSSOLOGY_DB_PASSWORD=fossy
+      - FOSSOLOGY_SCHEDULER_HOST=scheduler
+    command: agent
+    depends_on:
+      - db
+      - scheduler     
   db:
     image: postgres:9.6
     restart: unless-stopped
