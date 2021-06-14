@@ -76,6 +76,8 @@ elif [[ $# -eq 1 && "$1" == "web" ]]; then
   exec /usr/sbin/apache2ctl -e info -D FOREGROUND
 elif [[ $# -eq 1 && "$1" == "agent" ]]; then
   echo "agent"
+  exec /etc/fossology/mods-enabled/nomos/agent/nomos -S
+  exec /bin/bash
 else
   exec "$@"
 fi

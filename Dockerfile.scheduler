@@ -32,6 +32,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && dpkg -i fossology-common_3.10.0.151~rc1-1_amd64.deb fossology-scheduler_3.10.0.151~rc1-1_amd64.deb fossology-db_3.10.0.151~rc1-1_amd64.deb || echo "deb failed" \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y -f
 
+COPY --from=builder /fossology_packages/fossology/packages/fossology-web_3.10.0.151~rc1-1_amd64.deb .
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+    && dpkg -i fossology-web_3.10.0.151~rc1-1_amd64.deb || echo "deb failed" \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y -f
 
 COPY ./docker-entrypoint.sh /fossology/docker-entrypoint.sh
 RUN chmod +x /fossology/docker-entrypoint.sh

@@ -27,3 +27,20 @@ COPY --from=builder /fossology_packages/fossology/packages/fossology-web_3.10.0.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && dpkg -i fossology-common_3.10.0.151~rc1-1_amd64.deb fossology-web_3.10.0.151~rc1-1_amd64.deb || echo "deb failed" \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y -f
+
+# configure php
+COPY ./install/scripts/php-conf-fix.sh ./install/scripts/php-conf-fix.sh
+RUN /fossology/install/scripts/php-conf-fix.sh --overwrite
+
+# configure apache
+RUN mkdir -p /var/log/apache2/ \
+ && ln -sf /proc/self/fd/1 /var/log/apache2/access.log \
+ && ln -sf /proc/self/fd/1 /var/log/apache2/error.log
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install cron -y\
+    && service cron start 
+
+COPY ./docker-entrypoint.sh /fossology/docker-entrypoint.sh
+RUN chmod +x /fossology/docker-entrypoint.sh
+ENTRYPOINT ["/fossology/docker-entrypoint.sh"]
