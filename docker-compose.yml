@@ -55,6 +55,8 @@ services:
     command: web
     ports:
       - 8081:80
+    labels:
+      kompose.service.type: loadbalancer
     depends_on:
       - db
       - scheduler

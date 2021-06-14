@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   annotations:
     kompose.cmd: kompose convert
+    kompose.service.type: loadbalancer
     kompose.version: 1.22.0 (955b78124)
   creationTimestamp: null
   labels:
@@ -19,6 +20,7 @@ spec:
     metadata:
       annotations:
         kompose.cmd: kompose convert
+        kompose.service.type: loadbalancer
         kompose.version: 1.22.0 (955b78124)
       creationTimestamp: null
       labels:
