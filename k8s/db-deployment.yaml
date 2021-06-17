@@ -1,49 +1,36 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.22.0 (955b78124)
   creationTimestamp: null
   labels:
-    io.kompose.service: db
+    io.fossology.service: db
   name: db
 spec:
+  serviceName: "db"
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: db
-  strategy:
-    type: Recreate
+      io.fossology.service: db
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.22.0 (955b78124)
       creationTimestamp: null
       labels:
-        io.kompose.service: db
+        io.fossology.service: db
     spec:
       containers:
         - env:
             - name: POSTGRES_DB
               value: fossology
             - name: POSTGRES_INITDB_ARGS
-              value: '''-E SQL_ASCII'''
+              value: '-E SQL_ASCII'
             - name: POSTGRES_PASSWORD
               value: fossy
             - name: POSTGRES_USER
               value: fossy
           image: postgres:9.6
-          livenessProbe:
-            exec:
-              command:
-                - pg_isready --dbname $POSTGRES_DB --username $POSTGRES_USER
-            failureThreshold: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
+          ports:
+            - containerPort: 5432
           name: db
-          resources: {}
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: database
@@ -52,4 +39,5 @@ spec:
         - name: database
           persistentVolumeClaim:
             claimName: database
-status: {}
+status:
+  replicas: 1

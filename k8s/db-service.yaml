@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    io.fossology.service: db
+  name: db
+spec:
+  ports:
+    - name: database
+      port: 5432
+  selector:
+    io.fossology.service: db
+  type: NodePort

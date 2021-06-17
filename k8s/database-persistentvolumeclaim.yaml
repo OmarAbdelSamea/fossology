@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   creationTimestamp: null
   labels:
-    io.kompose.service: database
+    io.fossology.service: database
   name: database
 spec:
   accessModes:
