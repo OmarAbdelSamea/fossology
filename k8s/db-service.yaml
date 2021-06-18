@@ -11,4 +11,4 @@ spec:
       port: 5432
   selector:
     io.fossology.service: db
-  type: NodePort
+  type: ClusterIP

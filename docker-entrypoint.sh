@@ -36,7 +36,21 @@ if [[ "$1" == "scheduler" ]]; then
     echo 'internal database without persistency will be used.'
     echo 'THIS IS NOT RECOMENDED FOR PRODUCTIVE USE!'
     echo '*****************************************************'
-    sleep 5
+    sleep 10
+    # psqln=0
+    # until [ "$psqln" -ge 10 ]; do
+    #   su postgres -c 'echo \\q|psql'
+    #   if [ $? = 0 ]; then
+    #       break
+    #   fi
+    #   echo "WARNING: postgresql isn't running. Retrying..."
+    #   sleep 15
+    #   psqln=$((psqln+1))
+    # done
+    # su postgres -c 'echo \\q|psql'
+    # if [ $? != 0 ]; then
+    #   echo "ERROR: postgresql isn't running"
+    # fi
     /etc/init.d/postgresql start
   else
     test_for_postgres() {
@@ -72,12 +86,15 @@ elif [[ $# -eq 1 && "$1" == "scheduler" ]]; then
     --verbose=3 \
     --reset
 elif [[ $# -eq 1 && "$1" == "web" ]]; then
+  sleep 20
   service cron start
   exec /usr/sbin/apache2ctl -e info -D FOREGROUND
 elif [[ $# -eq 1 && "$1" == "agent" ]]; then
-  echo "agent"
-  exec /etc/fossology/mods-enabled/nomos/agent/nomos -S
   exec /bin/bash
+  exec /etc/fossology/mods-enabled/nomos/agent/nomos -h
+  exec /usr/sbin/sshd -D
+  sleep infinity
+  echo "agent2"
 else
   exec "$@"
 fi

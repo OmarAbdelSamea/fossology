@@ -1,37 +1,27 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: svc
-spec:
-  selector:
-    io.fossology.service: scheduler
-  clusterIP: None
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    io.fossology.service: scheduler
-  name: scheduler
+    io.fossology.service: agent
+  name: copyright
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.fossology.service: scheduler
-  strategy:
-    type: Recreate
+      io.fossology.service: agent
+  strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        io.fossology.service: scheduler
+        io.fossology.service: agent
     spec:
-      hostname: scheduler
-      subdomain: svc
+      hostname: copyright
+      subdomain: agent-svc
       containers:
         - args:
-            - scheduler
+            - agent
           env:
             - name: FOSSOLOGY_DB_HOST
               valueFrom:
@@ -53,25 +43,16 @@ spec:
                 secretKeyRef:
                   name: db-secret
                   key: POSTGRES_USER
-          image: fossology:scheduler
-          # ports:
-          #   - containerPort: 3000
+            - name: FOSSOLOGY_SCHEDULER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: fossology
+                  key: FOSSOLOGY_SCHEDULER_HOST          
+          image: fossology:copyright
           imagePullPolicy: Never
-          livenessProbe:
-            exec:
-              command:
-                - "true"
-            failureThreshold: 2
-            periodSeconds: 5
-            timeoutSeconds: 5
-          name: scheduler
+          command: ["/bin/sh", "-ec", "sleep infinity"]
+          # command: ["/usr/sbin/sshd" , "-D"]
+          name: copyright
           resources: {}
-          volumeMounts:
-            - mountPath: /srv/fossology/repository/
-              name: repository
       restartPolicy: Always
-      volumes:
-        - name: repository
-          persistentVolumeClaim:
-            claimName: repository
 status: {}

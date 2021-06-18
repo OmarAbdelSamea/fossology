@@ -23,15 +23,33 @@ spec:
             - web
           env:
             - name: FOSSOLOGY_DB_HOST
-              value: db
+              valueFrom:
+                configMapKeyRef:
+                  name: fossology
+                  key: FOSSOLOGY_DB_HOST
             - name: FOSSOLOGY_DB_NAME
-              value: fossology
+              valueFrom:
+                configMapKeyRef:
+                  name: db
+                  key: POSTGRES_DB
             - name: FOSSOLOGY_DB_PASSWORD
-              value: fossy
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
             - name: FOSSOLOGY_DB_USER
-              value: fossy
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USER
             - name: FOSSOLOGY_SCHEDULER_HOST
-              value: scheduler
+              valueFrom:
+                configMapKeyRef:
+                  name: fossology
+                  key: FOSSOLOGY_SCHEDULER_HOST
+          # envFrom:
+          # - configMapRef:
+          #     name: webAgents                  
           image: fossology:web
           imagePullPolicy: Never
           name: web

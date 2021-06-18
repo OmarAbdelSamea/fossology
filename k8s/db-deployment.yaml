@@ -20,17 +20,36 @@ spec:
       containers:
         - env:
             - name: POSTGRES_DB
-              value: fossology
+              valueFrom:
+                configMapKeyRef:
+                  name: db
+                  key: POSTGRES_DB
             - name: POSTGRES_INITDB_ARGS
-              value: '-E SQL_ASCII'
+              valueFrom:
+                configMapKeyRef:
+                  name: db
+                  key: POSTGRES_INITDB_ARGS
             - name: POSTGRES_PASSWORD
-              value: fossy
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
             - name: POSTGRES_USER
-              value: fossy
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USER
           image: postgres:9.6
           ports:
             - containerPort: 5432
           name: db
+          # livenessProbe:
+          #   exec:
+          #     command:
+          #       - pg_isready --dbname $(POSTGRES_DB) --username $(POSTGRES_USER)
+          #   failureThreshold: 5
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: database
