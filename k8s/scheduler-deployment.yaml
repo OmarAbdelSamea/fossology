@@ -29,6 +29,7 @@ spec:
     spec:
       hostname: scheduler
       subdomain: svc
+      serviceAccountName: internal-kubectl
       containers:
         - args:
             - scheduler
