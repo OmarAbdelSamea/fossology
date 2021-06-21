@@ -25,7 +25,7 @@ user=$db_user;
 password=$db_password;
 EOM
 
-sed -i 's/address = .*/address = '"${FOSSOLOGY_SCHEDULER_HOST:-db}"'/' \
+sed -i 's/address = .*/address = '"${FOSSOLOGY_SCHEDULER_HOST:-scheduler.svc}"'/' \
     /etc/fossology/fossology.conf
 
 # Startup DB if needed or wait for external DB
