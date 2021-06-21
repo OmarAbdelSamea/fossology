@@ -9,7 +9,7 @@
 #
 # Description: Docker container image recipe
 
-FROM debian:buster-slim
+FROM debian:buster-slim as builder
 LABEL maintainer="Fossology <fossology@fossology.org>"
 
 WORKDIR /fossology_packages/fossology
@@ -28,3 +28,8 @@ RUN  ./utils/fo-installdeps -y -b
 
 RUN  ./utils/fo-debuild --no-sign --no-tar       
 
+FROM scratch
+
+WORKDIR /fossology_packages/fossology
+
+COPY --from=builder /fossology_packages/fossology/packages /fossology_packages/fossology/packages
