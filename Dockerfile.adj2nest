@@ -20,9 +20,9 @@ WORKDIR /fossology
 
 LABEL maintainer="Fossology <fossology@fossology.org>"
 
-COPY --from=builder /fossology_packages/fossology/packages/fossology-common_3.10.0.151~rc1-1_amd64.deb .
-COPY --from=builder /fossology_packages/fossology/packages/fossology-adj2nest_3.10.0.151~rc1-1_amd64.deb .
+COPY --from=builder /fossology_packages/fossology/packages/fossology-common_*_amd64.deb .
+COPY --from=builder /fossology_packages/fossology/packages/fossology-adj2nest_*_amd64.deb .
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
-    && dpkg -i fossology-common_3.10.0.151~rc1-1_amd64.deb fossology-adj2nest_3.10.0.151~rc1-1_amd64.deb || echo "deb failed" \
+    && dpkg -i fossology-common_*_amd64.deb fossology-adj2nest_*_amd64.deb || echo "deb failed" \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y -f
