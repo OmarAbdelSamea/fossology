@@ -4,23 +4,20 @@ metadata:
   creationTimestamp: null
   labels:
     io.fossology.service: agent
-    agent.type: nomos
-  name: nomos
+  name: ununpack
 spec:
   replicas: 1
   selector:
     matchLabels:
       io.fossology.service: agent
-      agent.type: nomos
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
         io.fossology.service: agent
-        agent.type: nomos
     spec:
-      hostname: nomos
+      hostname: ununpack
       subdomain: agent-svc
       containers:
         - args:
@@ -51,11 +48,11 @@ spec:
                 configMapKeyRef:
                   name: fossology
                   key: FOSSOLOGY_SCHEDULER_HOST
-          image: fossology:nomos
+          image: fossology:ununpack
           imagePullPolicy: Never
           command: ["/bin/sh", "-ec", "sleep infinity"]
           # command: ["/usr/sbin/sshd" , "-D"]
-          name: nomos
+          name: ununpack
           resources: {}
       restartPolicy: Always
 status: {}

@@ -1,0 +1,18 @@
+root@scheduler:/fossology# kubectl -it exec $(kubectl get pod | grep nomos | awk '{print $1}') -- bash -c "/etc/fossology/mods-enabled/nomos/agent/nomos --scheduler_start --userID 3 --groupID 2 --jobId 1"
+VERSION: "3.10.0.151-rc1"
+OK
+HEART: 0 1
+HEART: 0 0
+HEART: 0 0
+
+
+////////
+
+
+root@scheduler:/fossology# kubectl exec -it $(kubectl get pod | grep copyright | awk '{print $1}') -- bash -c "/etc/fossology/mods-enabled/copyright/agent/copyright --scheduler_start --userID 3 --groupID 2 --jobId 1"
+cannot open regex definitions in conf: /usr/local/share/fossology/copyright/agent/copyright.conf
+VERSION: "3.10.0.151-rc1"
+OK
+HEART: 0 1
+HEART: 0 0
+HEART: 0 0

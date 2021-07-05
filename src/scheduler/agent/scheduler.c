@@ -822,12 +822,14 @@ void scheduler_agent_config(scheduler_t* scheduler)
                 dirname, name, cmd);
         }
       }
-
       cmd  = fo_config_get(config, "default", "command", &error);
       TEST_ERROR(error, "%s: the default group must have a command key", dirname);
       tmp  = fo_config_get(config, "default", "max", &error);
       TEST_ERROR(error, "%s: the default group must have a max key", dirname);
-
+      
+      NOTIFY("Debug ma list cmd %s", cmd);
+      NOTIFY("Debug ma list tmp %s", tmp);
+      NOTIFY("Debug ma list name %s", name);
       if(!add_meta_agent(scheduler->meta_agents, name, cmd, (max = atoi(tmp)), special))
       {
         V_SCHED("CONFIG: could not create meta agent using %s\n", ep->d_name);
@@ -869,6 +871,7 @@ void scheduler_foss_config(scheduler_t* scheduler)
   int32_t  special = 0;           // anything that is special about the agent (EXCLUSIVE)
   gchar    addbuf[512];           // standard string buffer
   gchar    dirbuf[FILENAME_MAX];  // standard string buffer
+  gchar    typebuf[FILENAME_MAX]; // standard string buffer
   GError*  error = NULL;          // error return location
   int32_t  i;                     // indexing variable
   host_t*  host;                  // new hosts will be created in the loop
@@ -917,8 +920,9 @@ void scheduler_foss_config(scheduler_t* scheduler)
       continue;
     }
 
-    sscanf(tmp, "%s %s %d", addbuf, dirbuf, &max);
-    host = host_init(keys[i], addbuf, dirbuf, max);
+    sscanf(tmp, "%s %s %d %s", addbuf, dirbuf, &max, typebuf);
+    NOTIFY("Current Host Type Sched: %s", tmp);
+    host = host_init(keys[i], addbuf, dirbuf, max, typebuf);
     host_insert(host, scheduler);
     if(TVERB_SCHED)
     {
@@ -927,6 +931,8 @@ void scheduler_foss_config(scheduler_t* scheduler)
       log_printf("   address = %s\n", addbuf);
       log_printf(" directory = %s\n", dirbuf);
       log_printf("       max = %d\n", max);
+      log_printf("       type = %s\n", typebuf);
+
     }
   }
 

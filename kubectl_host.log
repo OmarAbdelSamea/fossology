@@ -1,0 +1,13 @@
+2021-07-02 08:58:55 scheduler [1] :: JOB[-1].nomos[102.nomos]: agent didn't send version information: "The connection to the server localhost:8080 was refused - did you specify the right host or port?"
+
+Hot fix:
+- Add fossology to root group
+2021-07-02 08:58:55 scheduler [1] :: JOB[-1].nomos[102.nomos]: agent didn't send version information: "error: error loading config file "/root/.kube/config": open /root/.kube/config: permission denied"
+
+Hot fix:
+- change /root/.kube permission
+
+2021-07-02 09:10:38 scheduler [1] :: JOB[-3].nomos[1173.nomos]: agent didn't send version information: "Unable to use a TTY - input is not a terminal or the right kind of file"
+
+Solution:
+- Remove -t option from command

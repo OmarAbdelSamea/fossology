@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     io.fossology.service: agent
-  name: copyright
+  name: adj2nest
 spec:
   replicas: 1
   selector:
@@ -17,7 +17,7 @@ spec:
       labels:
         io.fossology.service: agent
     spec:
-      hostname: copyright
+      hostname: adj2nest
       subdomain: agent-svc
       containers:
         - args:
@@ -47,12 +47,12 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: fossology
-                  key: FOSSOLOGY_SCHEDULER_HOST          
-          image: fossology:copyright
+                  key: FOSSOLOGY_SCHEDULER_HOST
+          image: fossology:adj2nest
           imagePullPolicy: Never
           command: ["/bin/sh", "-ec", "sleep infinity"]
           # command: ["/usr/sbin/sshd" , "-D"]
-          name: copyright
+          name: adj2nest
           resources: {}
       restartPolicy: Always
 status: {}

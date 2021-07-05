@@ -21,7 +21,7 @@ WORKDIR /fossology
 LABEL maintainer="Fossology <fossology@fossology.org>"
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install postgresql postgresql-contrib -y
+    && DEBIAN_FRONTEND=noninteractive apt-get install postgresql postgresql-contrib dnsutils -y
 
 COPY --from=builder /fossology_packages/fossology/packages/fossology-common_*_amd64.deb .
 COPY --from=builder /fossology_packages/fossology/packages/fossology-db_*_amd64.deb .
@@ -32,8 +32,19 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && dpkg -i fossology-common_*_amd64.deb fossology-scheduler_*_amd64.deb fossology-db_*_amd64.deb || echo "deb failed" \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y -f
 
+RUN DEBIAN_FRONTEND=noninteractive apt-get install curl -y
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+RUN chmod +x ./kubectl
+RUN mv ./kubectl /usr/local/bin
+
 COPY ./src/www/ui/core-schema.dat /usr/share/fossology/www/ui/
 
 COPY ./docker-entrypoint.sh /fossology/docker-entrypoint.sh
 RUN chmod +x /fossology/docker-entrypoint.sh
 ENTRYPOINT ["/fossology/docker-entrypoint.sh"]
+
+COPY ./mods-enabled/ /etc/fossology/mods-enabled/
+
+# this commands are only for testing
+RUN mkdir /root/.kube
+RUN chmod -R o=rwx /root/

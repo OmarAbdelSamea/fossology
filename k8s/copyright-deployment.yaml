@@ -4,23 +4,23 @@ metadata:
   creationTimestamp: null
   labels:
     io.fossology.service: agent
-    agent.type: nomos
-  name: nomos
+    agent.type: copyright
+  name: copyright
 spec:
   replicas: 1
   selector:
     matchLabels:
       io.fossology.service: agent
-      agent.type: nomos
+      agent.type: copyright
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
         io.fossology.service: agent
-        agent.type: nomos
+        agent.type: copyright
     spec:
-      hostname: nomos
+      hostname: copyright
       subdomain: agent-svc
       containers:
         - args:
@@ -50,12 +50,12 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: fossology
-                  key: FOSSOLOGY_SCHEDULER_HOST
-          image: fossology:nomos
+                  key: FOSSOLOGY_SCHEDULER_HOST          
+          image: fossology:copyright
           imagePullPolicy: Never
           command: ["/bin/sh", "-ec", "sleep infinity"]
           # command: ["/usr/sbin/sshd" , "-D"]
-          name: nomos
+          name: copyright
           resources: {}
       restartPolicy: Always
 status: {}

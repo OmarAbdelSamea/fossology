@@ -28,6 +28,10 @@ EOM
 sed -i 's/address = .*/address = '"${FOSSOLOGY_SCHEDULER_HOST:-scheduler.svc}"'/' \
     /etc/fossology/fossology.conf
 
+sed -i 's/localhost = .*/nomos = nomos.agent-svc \/etc\/fossology 10 nomos/' \
+ /etc/fossology/fossology.conf
+
+# sed -i 's/host=.*/host=db;/' /etc/fossology/Db.conf
 # Startup DB if needed or wait for external DB
 if [[ "$1" == "scheduler" ]]; then
   if [[ $db_host == 'db' ]]; then
@@ -77,13 +81,13 @@ if [[ $# -eq 0 ]]; then
   /etc/init.d/cron start
   /etc/fossology/mods-enabled/scheduler/agent/fo_scheduler \
     --log /dev/stdout \
-    --verbose=3 \
+    --verbose=4095 \
     --reset &
   /usr/sbin/apache2ctl -D FOREGROUND
 elif [[ $# -eq 1 && "$1" == "scheduler" ]]; then
   exec /etc/fossology/mods-enabled/scheduler/agent/fo_scheduler \
     --log /dev/stdout \
-    --verbose=3 \
+    --verbose=4095 \
     --reset
 elif [[ $# -eq 1 && "$1" == "web" ]]; then
   sleep 20

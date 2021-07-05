@@ -253,13 +253,19 @@ static int agent_test(const gchar* name, meta_agent_t* ma, scheduler_t* schedule
   GList* iter;
   host_t* host;
   char *jq_cmd_args = 0;
-
+  NOTIFY("Meta Agent Name: %s", ma->name);
   for (iter = scheduler->host_queue; iter != NULL; iter = iter->next)
-  {
+  {    
     host = (host_t*) iter->data;
-    V_AGENT("META_AGENT[%s] testing on HOST[%s]\n", ma->name, host->name);
-    job_t* job = job_init(scheduler->job_list, scheduler->job_queue, ma->name, host->name, id_gen--, 0, 0, 0, 0, jq_cmd_args);
-    agent_init(scheduler, host, job);
+    NOTIFY("Current Host Type: %s", host->agent_type);
+    if (strcmp(host->agent_type, ma->name) == 0)
+    {
+      NOTIFY("Match!");
+      V_AGENT("META_AGENT[%s] testing on HOST[%s]\n", ma->name, host->name);
+      job_t* job = job_init(scheduler->job_list, scheduler->job_queue, ma->name, host->name, id_gen--, 0, 0, 0, 0, jq_cmd_args);
+      agent_init(scheduler, host, job);
+      break;
+    }
   }
 
   return 0;
@@ -648,6 +654,7 @@ static void* agent_spawn(agent_spawn_args* pass)
   int len;
   char buffer[2048];          // character buffer
 
+
   /* spawn the new process */
   while ((agent->pid = fork()) < 0)
     sleep(rand() % CONF_fork_backoff_time);
@@ -668,7 +675,6 @@ static void* agent_spawn(agent_spawn_args* pass)
     /* set the priority of the process to the job's priority */
     if (nice(agent->owner->priority) == -1)
       ERROR("unable to correctly set priority of agent process %d", agent->pid);
-
     /* if host is null, the agent will run locally to */
     /* run the agent locally, use the commands that    */
     /* were parsed when the meta_agent was created    */
@@ -688,7 +694,6 @@ static void* agent_spawn(agent_spawn_args* pass)
       {
         ERROR("unable to change working directory: %s\n", strerror(errno));
       }
-
       execv(args[0], args);
     }
     /* otherwise the agent will be started using ssh   */
@@ -697,7 +702,7 @@ static void* agent_spawn(agent_spawn_args* pass)
     /* command as the last argument to the ssh command */
     else
     {
-      args = g_new0(char*, 5);
+      args = g_new0(char*, 10);
       len = snprintf(buffer, sizeof(buffer), AGENT_BINARY " --userID=%d --groupID=%d --scheduler_start --jobId=%d",
                      agent->host->agent_dir, AGENT_CONF, agent->type->name, agent->type->raw_cmd,
                      agent->owner->user_id, agent->owner->group_id, agent->owner->parent_id);
@@ -709,12 +714,19 @@ static void* agent_spawn(agent_spawn_args* pass)
 
         exit(5);
       }
-
-      args[0] = "/usr/bin/ssh";
-      args[1] = agent->host->address;
-      args[2] = buffer;
-      args[3] = agent->owner->jq_cmd_args;
-      args[4] = NULL;
+      // kubectl -it exec $(kubectl get pod | grep nomos | awk '{print $1}') -- bash -c
+      args[0] = "/usr/local/bin/kubectl";
+      args[1] = "exec";
+      args[2] = "deploy/%s", agent->owner->agent_type;
+      args[3] = "-i";
+      args[4] = "--";
+      args[5] = "bash";
+      args[6] = "-c";
+      args[7] = buffer;
+      args[8] = agent->owner->jq_cmd_args
+      //args[7] = "/etc/fossology/mods-enabled/nomos/agent/nomos --scheduler_start --userID=0 --groupID=0 --scheduler_start --jobId=0";
+      args[9] = NULL;
+      NOTIFY("command = %s", agent->owner->jq_cmd_args);
       execv(args[0], args);
     }
 
