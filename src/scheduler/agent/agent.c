@@ -703,7 +703,7 @@ static void* agent_spawn(agent_spawn_args* pass)
     else
     {
       args = g_new0(char*, 10);
-      len = snprintf(buffer, sizeof(buffer), AGENT_BINARY " --userID=%d --groupID=%d --scheduler_start --jobId=%d",
+      len = snprintf(buffer, sizeof(buffer), AGENT_BINARY " --userID=%d --groupID=%d --jobId=%d",
                      agent->host->agent_dir, AGENT_CONF, agent->type->name, agent->type->raw_cmd,
                      agent->owner->user_id, agent->owner->group_id, agent->owner->parent_id);
 
@@ -715,18 +715,20 @@ static void* agent_spawn(agent_spawn_args* pass)
         exit(5);
       }
       // kubectl -it exec $(kubectl get pod | grep nomos | awk '{print $1}') -- bash -c
+      char pod_selector[20] = "deploy/";
+      strcat(pod_selector, agent->owner->agent_type);
       args[0] = "/usr/local/bin/kubectl";
       args[1] = "exec";
-      args[2] = "deploy/%s", agent->owner->agent_type;
+      args[2] = pod_selector;
       args[3] = "-i";
       args[4] = "--";
       args[5] = "bash";
       args[6] = "-c";
       args[7] = buffer;
-      args[8] = agent->owner->jq_cmd_args
+      args[8] = agent->owner->jq_cmd_args;
       //args[7] = "/etc/fossology/mods-enabled/nomos/agent/nomos --scheduler_start --userID=0 --groupID=0 --scheduler_start --jobId=0";
       args[9] = NULL;
-      NOTIFY("command = %s", agent->owner->jq_cmd_args);
+      NOTIFY("command = %s", args[7]);
       execv(args[0], args);
     }
 
@@ -867,7 +869,7 @@ agent_t* agent_init(scheduler_t* scheduler, host_t* host, job_t* job)
     ERROR("agent %s has been invalidated by version information", job->agent_type);
     return NULL;
   }
-
+  
   /* create the pipes between the child and the parent */
   if (pipe(parent_to_child) != 0)
   {
