@@ -53,7 +53,7 @@ spec:
                   key: FOSSOLOGY_SCHEDULER_HOST          
           image: fossology:copyright
           imagePullPolicy: Never
-          command: ["/bin/sh", "-ec", "sleep infinity"]
+          # command: ["/bin/sh", "-ec", "sleep infinity"]
           # command: ["/usr/sbin/sshd" , "-D"]
           name: copyright
           resources: {}

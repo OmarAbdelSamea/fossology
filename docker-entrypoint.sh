@@ -31,6 +31,14 @@ sed -i 's/address = .*/address = '"${FOSSOLOGY_SCHEDULER_HOST:-scheduler.svc}"'/
 sed -i 's/localhost = .*/nomos = nomos.agent-svc \/etc\/fossology 10 nomos/' \
  /etc/fossology/fossology.conf
 
+sed -i '/nomos = .*/a copyright = copyright.agent-svc \/etc\/fossology 10 copyright' \
+ /etc/fossology/fossology.conf
+
+# sed -i '/copyright = .*/a adj2nest = adj2nest.agent-svc \/etc\/fossology 10 adj2nest' \
+#  /etc/fossology/fossology.conf 
+
+# sed -i '/adj2nest = .*/a ununpack = ununpack.agent-svc \/etc\/fossology 10 ununpack' \
+#  /etc/fossology/fossology.conf  
 # sed -i 's/host=.*/host=db;/' /etc/fossology/Db.conf
 # Startup DB if needed or wait for external DB
 if [[ "$1" == "scheduler" ]]; then
@@ -41,20 +49,6 @@ if [[ "$1" == "scheduler" ]]; then
     echo 'THIS IS NOT RECOMENDED FOR PRODUCTIVE USE!'
     echo '*****************************************************'
     sleep 10
-    # psqln=0
-    # until [ "$psqln" -ge 10 ]; do
-    #   su postgres -c 'echo \\q|psql'
-    #   if [ $? = 0 ]; then
-    #       break
-    #   fi
-    #   echo "WARNING: postgresql isn't running. Retrying..."
-    #   sleep 15
-    #   psqln=$((psqln+1))
-    # done
-    # su postgres -c 'echo \\q|psql'
-    # if [ $? != 0 ]; then
-    #   echo "ERROR: postgresql isn't running"
-    # fi
     /etc/init.d/postgresql start
   else
     test_for_postgres() {
@@ -90,15 +84,11 @@ elif [[ $# -eq 1 && "$1" == "scheduler" ]]; then
     --verbose=4095 \
     --reset
 elif [[ $# -eq 1 && "$1" == "web" ]]; then
-  sleep 20
   service cron start
   exec /usr/sbin/apache2ctl -e info -D FOREGROUND
 elif [[ $# -eq 1 && "$1" == "agent" ]]; then
-  exec /bin/bash
-  exec /etc/fossology/mods-enabled/nomos/agent/nomos -h
-  exec /usr/sbin/sshd -D
-  sleep infinity
-  echo "agent2"
+  echo "agent"
+  exec tail -f /dev/null
 else
   exec "$@"
 fi
