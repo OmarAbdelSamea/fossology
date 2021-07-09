@@ -48,7 +48,7 @@ spec:
                 configMapKeyRef:
                   name: fossology
                   key: FOSSOLOGY_SCHEDULER_HOST
-          image: fossology:adj2nest
+          image: fossology:ununpack # adj2nest is installed
           imagePullPolicy: Never
           # command: ["/bin/sh", "-ec", "sleep infinity"]
           # command: ["/usr/sbin/sshd" , "-D"]
