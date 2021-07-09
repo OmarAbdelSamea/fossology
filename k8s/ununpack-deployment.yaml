@@ -4,18 +4,21 @@ metadata:
   creationTimestamp: null
   labels:
     io.fossology.service: agent
+    agent.type: ununpack
   name: ununpack
 spec:
   replicas: 1
   selector:
     matchLabels:
       io.fossology.service: agent
+      agent.type: ununpack
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
         io.fossology.service: agent
+        agent.type: ununpack
     spec:
       hostname: ununpack
       subdomain: agent-svc
