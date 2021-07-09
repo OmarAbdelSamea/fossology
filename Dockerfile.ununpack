@@ -27,3 +27,7 @@ COPY --from=builder /fossology_packages/fossology/packages/fossology-ununpack_*_
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && dpkg -i fossology-common_*_amd64.deb fossology-ununpack_*_amd64.deb || echo "deb failed" \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y -f
+
+COPY ./docker-entrypoint.sh /fossology/docker-entrypoint.sh
+RUN chmod +x /fossology/docker-entrypoint.sh
+ENTRYPOINT ["/fossology/docker-entrypoint.sh"]

@@ -45,6 +45,6 @@ ENTRYPOINT ["/fossology/docker-entrypoint.sh"]
 
 COPY ./mods-enabled/ /etc/fossology/mods-enabled/
 
-# this commands are only for testing
+# these commands are only for testing
 RUN mkdir /root/.kube
 RUN chmod -R o=rwx /root/
