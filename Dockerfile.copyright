@@ -31,3 +31,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
 COPY ./docker-entrypoint.sh /fossology/docker-entrypoint.sh
 RUN chmod +x /fossology/docker-entrypoint.sh
 ENTRYPOINT ["/fossology/docker-entrypoint.sh"]
+
+# these commands are only for testing
+RUN mkdir -p /usr/local/share/fossology/copyright/agent
+RUN ln -s /etc/fossology/mods-enabled/copyright/agent/copyright.conf \
+ /usr/local/share/fossology/copyright/agent/copyright.conf
