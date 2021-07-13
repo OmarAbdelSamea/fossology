@@ -4,18 +4,21 @@ metadata:
   creationTimestamp: null
   labels:
     io.fossology.service: agent
+    agent.type: adj2nest
   name: adj2nest
 spec:
   replicas: 1
   selector:
     matchLabels:
       io.fossology.service: agent
+      agent.type: adj2nest
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
         io.fossology.service: agent
+        agent.type: adj2nest
     spec:
       hostname: adj2nest
       subdomain: agent-svc
